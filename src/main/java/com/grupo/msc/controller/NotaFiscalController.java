@@ -32,7 +32,7 @@ public class NotaFiscalController {
 	}
 	
 	@GetMapping("lista")
-	public ResponseEntity<NotaFiscal> lista(@RequestParam String numero){
+	public ResponseEntity<NotaFiscal> lista(@RequestParam Long numero){
 		return new ResponseEntity<NotaFiscal>(nfService.acharPeloNumero(numero), HttpStatus.OK);
 	}
 	

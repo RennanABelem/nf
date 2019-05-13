@@ -38,7 +38,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService{
 	}
 	
 	@Override
-	public NotaFiscal acharPeloNumero(String numero) {
+	public NotaFiscal acharPeloNumero(Long numero) {
 		Optional<NotaFiscal> nf = nfRepo.findByNumero(numero);
 		return nf.orElseThrow(()-> new ResourceExceptionBadRequest("Não existe nota fiscal com o [NUMERO = " + numero + " ] informado"));
 	}

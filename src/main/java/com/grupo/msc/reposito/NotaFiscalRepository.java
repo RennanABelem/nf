@@ -11,6 +11,6 @@ import com.grupo.msc.model.NotaFiscal;
 @Repository
 public interface NotaFiscalRepository extends JpaRepository<NotaFiscal, Long>{
 
-	public Optional<NotaFiscal> findByNumero(@Param("numero") String numero);
+	public Optional<NotaFiscal> findByNumero(@Param("numero") Long numero);
 	
 }

@@ -10,5 +10,5 @@ public interface NotaFiscalService {
 
 	public MessageResponse gerarNota(NotaFiscalDto notaFiscalDto);
 	public List<NotaFiscal> listar();
-	public NotaFiscal acharPeloNumero(String numero);
+	public NotaFiscal acharPeloNumero(Long numero);
 }

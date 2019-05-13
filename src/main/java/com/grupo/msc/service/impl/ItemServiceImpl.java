@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.grupo.msc.dto.ItemDto;
 import com.grupo.msc.model.ItemDaNota;
 import com.grupo.msc.reposito.ItemRepository;
+import com.grupo.msc.response.MessageResponse;
 import com.grupo.msc.service.ItemService;
 
 @Service
@@ -17,10 +18,11 @@ public class ItemServiceImpl implements ItemService{
 	private ItemRepository repo;
 	
 	@Override
-	public void salvar(ItemDto itemDto) {
+	public MessageResponse salvar(ItemDto itemDto) {
 		ItemDaNota itemDaNota = new ItemDaNota(itemDto);
 		
 		repo.save(itemDaNota);
+		return new MessageResponse("Item registrado com sucesso!");
 	}
 	
 	@Override

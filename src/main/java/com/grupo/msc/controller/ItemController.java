@@ -2,6 +2,8 @@ package com.grupo.msc.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.grupo.msc.dto.ItemDto;
 import com.grupo.msc.model.ItemDaNota;
+import com.grupo.msc.response.MessageResponse;
 import com.grupo.msc.service.ItemService;
 
 @RestController
@@ -23,9 +26,8 @@ public class ItemController {
 	private ItemService service;
 	
 	@PostMapping("salvar")
-	public ResponseEntity<Void> salvar(@RequestBody ItemDto itemDto){
-		service.salvar(itemDto);
-		return new ResponseEntity<Void>(HttpStatus.CREATED);
+	public ResponseEntity<MessageResponse> salvar(@Valid @RequestBody ItemDto itemDto){
+		return new ResponseEntity<MessageResponse>(service.salvar(itemDto), HttpStatus.CREATED);
 	}
 	
 	@GetMapping("listar")
