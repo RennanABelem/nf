@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.grupo.msc.exception.ResourceExceptionBadRequest;
 import com.grupo.msc.exception.ResourceExceptionNotFound;
+import com.grupo.msc.response.ResponseError;
 
 @ControllerAdvice
 public class NotaFiscalControllerExceptionHandler extends ResponseEntityExceptionHandler {
@@ -47,10 +48,10 @@ public class NotaFiscalControllerExceptionHandler extends ResponseEntityExceptio
 	
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public ResponseEntity<?> constraintViolationException(DataIntegrityViolationException ex, WebRequest request){
-		ResponseError response = new ResponseError("Número da Nota Fiscal já esta sendo utilizado.", HttpStatus.INTERNAL_SERVER_ERROR.value());
+		ResponseError response = new ResponseError("Número da Nota Fiscal já esta sendo utilizado.", HttpStatus.CONFLICT.value());
 		logger.info(ex.getMessage());
 		ex.printStackTrace();
-		return handleExceptionInternal(ex, response, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+		return handleExceptionInternal(ex, response, new HttpHeaders(), HttpStatus.CONFLICT, request);
 	}
 
      @Override

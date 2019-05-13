@@ -1,4 +1,4 @@
-package com.grupo.msc.exception.handler;
+package com.grupo.msc.response;
 
 import java.util.ArrayList;
 import java.util.List;
