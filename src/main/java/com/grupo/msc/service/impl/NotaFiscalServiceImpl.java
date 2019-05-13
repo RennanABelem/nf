@@ -43,6 +43,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService{
 		List<ItemDaNota> itensDaNota = new ArrayList<ItemDaNota>();
 		double valorTotal = 0;
 		
+		
 		for(Long itemId : notaFiscalDto.getItemId()) {
 			Optional<ItemDaNota> itemDaNota = itemRepo.findById(itemId);
 			ItemDaNota item = itemDaNota.orElseThrow(() -> new RuntimeException("Não existe item com o [ID = " + itemId + " ]."));
@@ -50,8 +51,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService{
 			valorTotal += item.getValor();
 			itensDaNota.add(item);
 		}
+		if(valorTotal != 0) {
+			
+			notaFiscal.setValorTotal(valorTotal);
+		}
 		
-		notaFiscal.setValorTotal(valorTotal);
 		notaFiscal.setNumero(notaFiscalDto.getNumero());
 		notaFiscal.setItens(itensDaNota);
 		
