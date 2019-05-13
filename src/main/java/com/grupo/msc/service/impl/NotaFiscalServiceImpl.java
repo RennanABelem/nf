@@ -33,6 +33,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService{
 		nfRepo.save(this.parseNF(notaFiscalDto));
 	}
 	
+	@Override
+	public NotaFiscal acharPeloNumero(String numero) {
+		return nfRepo.findByNumero(numero);
+	}
+	
 	private NotaFiscal parseNF(NotaFiscalDto notaFiscalDto) {
 		NotaFiscal notaFiscal = new NotaFiscal();
 		List<ItemDaNota> itensDaNota = new ArrayList<ItemDaNota>();

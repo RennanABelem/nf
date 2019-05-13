@@ -9,4 +9,5 @@ public interface NotaFiscalService {
 
 	public void gerarNota(NotaFiscalDto notaFiscalDto);
 	public List<NotaFiscal> listar();
+	public NotaFiscal acharPeloNumero(String numero);
 }
