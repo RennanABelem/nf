@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.grupo.msc.dto.NotaFiscalDto;
+import com.grupo.msc.exception.ResourceExceptionBadRequest;
+import com.grupo.msc.exception.ResourceExceptionNotFound;
 import com.grupo.msc.model.ItemDaNota;
 import com.grupo.msc.model.NotaFiscal;
 import com.grupo.msc.reposito.ItemRepository;
@@ -35,7 +37,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService{
 	
 	@Override
 	public NotaFiscal acharPeloNumero(String numero) {
-		return nfRepo.findByNumero(numero);
+		Optional<NotaFiscal> nf = nfRepo.findByNumero(numero);
+		return nf.orElseThrow(()-> new ResourceExceptionBadRequest("Não existe nota fiscal com o [NUMERO = " + numero + " ] informado"));
 	}
 	
 	private NotaFiscal parseNF(NotaFiscalDto notaFiscalDto) {
@@ -43,19 +46,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService{
 		List<ItemDaNota> itensDaNota = new ArrayList<ItemDaNota>();
 		double valorTotal = 0;
 		
-		
 		for(Long itemId : notaFiscalDto.getItemId()) {
 			Optional<ItemDaNota> itemDaNota = itemRepo.findById(itemId);
-			ItemDaNota item = itemDaNota.orElseThrow(() -> new RuntimeException("Não existe item com o [ID = " + itemId + " ]."));
+			ItemDaNota item = itemDaNota.orElseThrow(() -> new ResourceExceptionNotFound("Não existe item com o [ID = " + itemId + "]."));
 			
 			valorTotal += item.getValor();
 			itensDaNota.add(item);
 		}
-		if(valorTotal != 0) {
-			
-			notaFiscal.setValorTotal(valorTotal);
-		}
 		
+		notaFiscal.setValorTotal(valorTotal);
 		notaFiscal.setNumero(notaFiscalDto.getNumero());
 		notaFiscal.setItens(itensDaNota);
 		
