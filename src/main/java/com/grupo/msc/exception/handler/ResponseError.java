@@ -1,31 +1,34 @@
 package com.grupo.msc.exception.handler;
 
-import org.springframework.http.HttpStatus;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResponseError {
 
 	private String mensagem;
 	private Integer codigo;
+	private List<String> errors;
 
 	public ResponseError(String mensagem, Integer codigo) {
 		this.mensagem = mensagem;
 		this.codigo = codigo;
+		errors = new ArrayList<String>();
+	}
+
+	public List<String> getErrors() {
+		return errors;
+	}
+
+	public void setErrors(List<String> errors) {
+		this.errors = errors;
 	}
 
 	public String getMensagem() {
 		return mensagem;
 	}
 
-	public void setMensagem(String mensagem) {
-		this.mensagem = mensagem;
-	}
-
 	public Integer getCodigo() {
 		return codigo;
-	}
-
-	public void setCodigo(Integer codigo) {
-		this.codigo = codigo;
 	}
 
 }

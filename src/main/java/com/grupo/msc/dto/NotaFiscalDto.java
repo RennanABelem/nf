@@ -2,16 +2,22 @@ package com.grupo.msc.dto;
 
 import java.util.List;
 
-public class NotaFiscalDto {
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
-	private String numero;
+public class NotaFiscalDto {
+	
+	@NotNull(message="O campo [numero] não pode ser nulo")
+	private Long numero;
+	
+	@NotEmpty(message="O campo [itemId] não pode ser nulo")
 	private List<Long> itemId;
 
-	public String getNumero() {
+	public Long getNumero() {
 		return numero;
 	}
 
-	public void setNumero(String numero) {
+	public void setNumero(Long numero) {
 		this.numero = numero;
 	}
 

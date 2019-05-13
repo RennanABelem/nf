@@ -2,7 +2,7 @@ package com.grupo.msc.controller;
 
 import java.util.List;
 
-import javax.websocket.server.PathParam;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.grupo.msc.dto.NotaFiscalDto;
 import com.grupo.msc.model.NotaFiscal;
+import com.grupo.msc.response.MessageResponse;
 import com.grupo.msc.service.NotaFiscalService;
 
 @RestController
@@ -36,8 +37,7 @@ public class NotaFiscalController {
 	}
 	
 	@PostMapping("gerarNota")
-	public ResponseEntity<Void> gerarNota(@RequestBody NotaFiscalDto notaFiscalDto){
-		nfService.gerarNota(notaFiscalDto);
-		return new ResponseEntity<Void>(HttpStatus.CREATED);
+	public ResponseEntity<MessageResponse> gerarNota(@Valid @RequestBody NotaFiscalDto notaFiscalDto){
+		return new ResponseEntity<MessageResponse>(nfService.gerarNota(notaFiscalDto), HttpStatus.CREATED);
 	}
  }

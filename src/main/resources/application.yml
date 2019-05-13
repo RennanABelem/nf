@@ -9,7 +9,7 @@ spring:
     show-sql: true
     
   datasource:
-    url: jdbc:mysql://localhost:3306/mscn?serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/msc?serverTimezone=UTC
     username: root
     password: 123456
     

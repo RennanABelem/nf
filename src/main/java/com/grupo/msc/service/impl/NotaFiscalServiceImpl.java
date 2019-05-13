@@ -14,6 +14,7 @@ import com.grupo.msc.model.ItemDaNota;
 import com.grupo.msc.model.NotaFiscal;
 import com.grupo.msc.reposito.ItemRepository;
 import com.grupo.msc.reposito.NotaFiscalRepository;
+import com.grupo.msc.response.MessageResponse;
 import com.grupo.msc.service.NotaFiscalService;
 
 @Service
@@ -31,8 +32,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService{
 	}
 	
 	@Override
-	public void gerarNota(NotaFiscalDto notaFiscalDto) {
+	public MessageResponse gerarNota(NotaFiscalDto notaFiscalDto) {
 		nfRepo.save(this.parseNF(notaFiscalDto));
+		return new MessageResponse("Nota Fiscal gerada com sucesso");
 	}
 	
 	@Override

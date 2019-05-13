@@ -3,6 +3,7 @@ package com.grupo.msc.model;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,7 +17,9 @@ public class NotaFiscal {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String numero;
+	
+	@Column(unique = true)
+	private Long numero;
 	private Double valorTotal;
 	
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -34,10 +37,10 @@ public class NotaFiscal {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public String getNumero() {
+	public Long getNumero() {
 		return numero;
 	}
-	public void setNumero(String numero) {
+	public void setNumero(Long numero) {
 		this.numero = numero;
 	}
 	public List<ItemDaNota> getItens() {
