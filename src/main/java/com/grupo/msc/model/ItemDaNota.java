@@ -16,8 +16,9 @@ public class ItemDaNota {
 	private Double valor;
 	private String nome;
 
-	public ItemDaNota() {}
-	
+	public ItemDaNota() {
+	}
+
 	public ItemDaNota(ItemDto itemDto) {
 		this.valor = itemDto.getValor();
 		this.nome = itemDto.getNome();
