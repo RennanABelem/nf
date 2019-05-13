@@ -40,8 +40,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService{
 	
 	private NotaFiscal parseNF(NotaFiscalDto notaFiscalDto) {
 		NotaFiscal notaFiscal = new NotaFiscal();
-		List<ItemDaNota> itensDaNota = new ArrayList<ItemDaNota>();
-		double valorTotal = 0;
+		List<ItemDaNota> itensDaNotaFiscal = new ArrayList<ItemDaNota>();
 		
 		for(Long itemId : notaFiscalDto.getItemId()) {
 			Optional<ItemDaNota> itemDaNota = itemRepo.findById(itemId);
@@ -50,8 +49,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService{
 			valorTotal += item.getValor();
 			itensDaNota.add(item);
 		}
-		
-		notaFiscal.setValorTotal(valorTotal);
 		notaFiscal.setNumero(notaFiscalDto.getNumero());
 		notaFiscal.setItens(itensDaNota);
 		
