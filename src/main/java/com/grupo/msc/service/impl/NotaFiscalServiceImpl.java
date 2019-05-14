@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 import com.grupo.msc.dto.NotaFiscalDto;
@@ -15,6 +16,7 @@ import com.grupo.msc.model.NotaFiscal;
 import com.grupo.msc.reposito.ItemRepository;
 import com.grupo.msc.reposito.NotaFiscalRepository;
 import com.grupo.msc.response.MessageResponse;
+import com.grupo.msc.response.NotaFila;
 import com.grupo.msc.service.NotaFiscalService;
 
 @Service
@@ -25,6 +27,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService{
 	
 	@Autowired 
 	private ItemRepository itemRepo;
+	
+	@Autowired
+	private JmsTemplate jmsTempalte;
 	
 	@Override
 	public List<NotaFiscal> listar(){
@@ -60,7 +65,19 @@ public class NotaFiscalServiceImpl implements NotaFiscalService{
 		notaFiscal.setNumero(notaFiscalDto.getNumero());
 		notaFiscal.setItens(itensDaNota);
 		
+		this.sendAndAutenticate(notaFiscal.getValorTotal(), notaFiscalDto.getNumeroConta());
+		
 		return notaFiscal;
 	}
+	
+	private void sendAndAutenticate(Double valorTotal, String numeroConta) {
+		NotaFila notaFila = new NotaFila();
+		
+		notaFila.setNumeroConta(numeroConta);
+		notaFila.setValorTotal(valorTotal);
+		
+		this.jmsTempalte.convertAndSend("fila-nota", notaFila);
+	}
+	
 	
 }
