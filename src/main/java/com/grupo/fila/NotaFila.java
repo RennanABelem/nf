@@ -1,4 +1,4 @@
-package com.grupo.msc.response;
+package com.grupo.fila;
 
 public class NotaFila {
 
@@ -20,5 +20,11 @@ public class NotaFila {
 	public void setNumeroConta(String numeroConta) {
 		this.numeroConta = numeroConta;
 	}
+
+	@Override
+	public String toString() {
+		return "NotaFila [valorTotal=" + valorTotal + ", numeroConta=" + numeroConta + "]";
+	}
+	
 
 }

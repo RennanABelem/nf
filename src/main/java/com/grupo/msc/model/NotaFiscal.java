@@ -21,10 +21,17 @@ public class NotaFiscal {
 	@Column(unique = true)
 	private Long numero;
 	private Double valorTotal;
-	
+	private String nomeTitular;
+
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<ItemDaNota> itens;
 	
+	public String getNomeTitular() {
+		return nomeTitular;
+	}
+	public void setNomeTitular(String nomeTitular) {
+		this.nomeTitular = nomeTitular;
+	}
 	public Double getValorTotal() {
 		return valorTotal;
 	}

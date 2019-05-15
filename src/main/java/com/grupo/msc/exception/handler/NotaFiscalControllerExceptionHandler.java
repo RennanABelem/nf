@@ -3,7 +3,6 @@ package com.grupo.msc.exception.handler;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -48,12 +48,21 @@ public class NotaFiscalControllerExceptionHandler extends ResponseEntityExceptio
 	
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public ResponseEntity<?> constraintViolationException(DataIntegrityViolationException ex, WebRequest request){
-		ResponseError response = new ResponseError("Número da Nota Fiscal já esta sendo utilizado.", HttpStatus.CONFLICT.value());
+		ResponseError response = new ResponseError("Número da Nota Fiscal já existe.", HttpStatus.CONFLICT.value());
 		logger.info(ex.getMessage());
 		ex.printStackTrace();
 		return handleExceptionInternal(ex, response, new HttpHeaders(), HttpStatus.CONFLICT, request);
 	}
-
+	
+	@ExceptionHandler(HttpClientErrorException.class)
+	public ResponseEntity<?> httpClientErrorException(HttpClientErrorException ex, WebRequest request){
+		ResponseError response = new ResponseError(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+		logger.info(ex.getMessage());
+		ex.printStackTrace();
+		return handleExceptionInternal(ex, response, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+	}
+	
+	
      @Override
 	 protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
              HttpHeaders headers,

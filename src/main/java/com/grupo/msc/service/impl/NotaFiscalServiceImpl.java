@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 import com.grupo.msc.dto.NotaFiscalDto;
@@ -15,69 +16,72 @@ import com.grupo.msc.model.ItemDaNota;
 import com.grupo.msc.model.NotaFiscal;
 import com.grupo.msc.reposito.ItemRepository;
 import com.grupo.msc.reposito.NotaFiscalRepository;
+import com.grupo.msc.response.ContaResponse;
 import com.grupo.msc.response.MessageResponse;
-import com.grupo.msc.response.NotaFila;
+import com.grupo.msc.response.NotaFiscalResponse;
+import com.grupo.msc.service.ConsultaContaService;
 import com.grupo.msc.service.NotaFiscalService;
 
 @Service
-public class NotaFiscalServiceImpl implements NotaFiscalService{
+public class NotaFiscalServiceImpl implements NotaFiscalService {
 
-	@Autowired 
-	private NotaFiscalRepository nfRepo;
+	private static final Logger logger = LoggerFactory.getLogger(NotaFiscalServiceImpl.class);
 	
-	@Autowired 
+	@Autowired
+	private NotaFiscalRepository nfRepo;
+
+	@Autowired
 	private ItemRepository itemRepo;
 	
 	@Autowired
-	private JmsTemplate jmsTempalte;
-	
+	private ConsultaContaService contaService;
+
 	@Override
-	public List<NotaFiscal> listar(){
+	public List<NotaFiscal> listar() {
 		return nfRepo.findAll();
+	}
+
+	@Override
+	public NotaFiscal acharPeloNumero(Long numero) {
+		Optional<NotaFiscal> nf = nfRepo.findByNumero(numero);
+		return nf.orElseThrow(() -> new ResourceExceptionBadRequest(
+				"Não existe nota fiscal com o [NUMERO = " + numero + " ] informado"));
 	}
 	
 	@Override
 	public MessageResponse gerarNota(NotaFiscalDto notaFiscalDto) {
-		nfRepo.save(this.parseNF(notaFiscalDto));
-		return new MessageResponse("Nota Fiscal gerada com sucesso");
+		return new MessageResponse("Nota fiscal gerada com sucesso!",  new NotaFiscalResponse(nfRepo.save(this.parseNotaFiscal(notaFiscalDto))));
 	}
-	
-	@Override
-	public NotaFiscal acharPeloNumero(Long numero) {
-		Optional<NotaFiscal> nf = nfRepo.findByNumero(numero);
-		return nf.orElseThrow(()-> new ResourceExceptionBadRequest("Não existe nota fiscal com o [NUMERO = " + numero + " ] informado"));
-	}
-	
-	private NotaFiscal parseNF(NotaFiscalDto notaFiscalDto) {
+
+	private NotaFiscal parseNotaFiscal(NotaFiscalDto notaFiscalDto) {
 		NotaFiscal notaFiscal = new NotaFiscal();
 		List<ItemDaNota> itensDaNota = new ArrayList<ItemDaNota>();
 		double valorTotal = 0;
-		
-		for(Long itemId : notaFiscalDto.getItemId()) {
+
+		for (Long itemId : notaFiscalDto.getItemId()) {
 			Optional<ItemDaNota> itemDaNota = itemRepo.findById(itemId);
 			ItemDaNota item = itemDaNota.orElseThrow(() -> new ResourceExceptionNotFound("Não existe item com o [ID = " + itemId + "]."));
-			
+
 			valorTotal += item.getValor();
 			itensDaNota.add(item);
 		}
-		
+
 		notaFiscal.setValorTotal(valorTotal);
 		notaFiscal.setNumero(notaFiscalDto.getNumero());
 		notaFiscal.setItens(itensDaNota);
+		ContaResponse contaResponse = contaService.consultarConta(Long.valueOf(notaFiscalDto.getNumeroConta()));
 		
-		this.sendAndAutenticate(notaFiscal.getValorTotal(), notaFiscalDto.getNumeroConta());
-		
-		return notaFiscal;
+		return this.calculaSaldo(contaResponse, notaFiscal);
 	}
 	
-	private void sendAndAutenticate(Double valorTotal, String numeroConta) {
-		NotaFila notaFila = new NotaFila();
-		
-		notaFila.setNumeroConta(numeroConta);
-		notaFila.setValorTotal(valorTotal);
-		
-		this.jmsTempalte.convertAndSend("fila-nota", notaFila);
+	private NotaFiscal calculaSaldo(ContaResponse contaResponse, NotaFiscal notaFiscal) {
+		if(contaResponse.getSaldo() > notaFiscal.getValorTotal()) {
+			contaResponse.setSaldo(contaResponse.getSaldo() - notaFiscal.getValorTotal());
+			notaFiscal.setNomeTitular(contaResponse.getNomeTitular());
+			return notaFiscal;
+		} else {
+			throw new ResourceExceptionBadRequest("Não foi possível gerar a [nota fiscal]. Motivo = SALDO insuficiente!");
+		}
 	}
-	
 	
 }
